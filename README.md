@@ -26,6 +26,8 @@ Controls:
 W → Move Up
 S → Move Down
 
+**"ESC"--to pause the game**  
+
 Objective:
 Avoid obstacles
 Survive as long as possible

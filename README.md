@@ -159,7 +159,8 @@ Large reward for passing obstacles
 Penalty for being too close to obstacles
 Small penalty for unnecessary movement
 Large penalty for death
-Installation and Setup
+
+**Installation and Setup**
 Requirements
 Godot Engine (4.x recommended)
 Python 3.9+

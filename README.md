@@ -1,136 +1,191 @@
-**Silver Surfer**
+Silver Surfer
 
 Godot + Reinforcement Learning + Rule-Based + Hybrid AI
 
-A fast paced 2D endless runner built in Godot,combined with multiple AI paradigms to explore the learning efficiency, behavior emergence, and decision optimization of the models and the rule based bot
+A fast paced 2D endless runner built in Godot, combined with multiple AI paradigms to explore learning efficiency, behavior emergence, and decision-making strategies.(thats what AI had to say ide like to call it a game with AI)
 
+Play the Game
 
------> https://dhruvj.itch.io/silver-surfer-base-game <-----(GAME LINK **HIGHLY RECCOMEND DOWNLOADING THE ACTUAL GAME AS THE WEB SOCKET CAPS THE QUALITY AND OVERALL GAME EXPERIENCE**)
+Download the full version here:
+https://dhruvj.itch.io/silver-surfer-base-game
 
+Note: The downloadable version is recommended. The browser version is limited and does not support the full AI pipeline.
 
+Project Overview
 
-Project Overview(my goal)
+Silver Surfer started as an experiment to understand how different AI approaches perform in the same controlled environment.
 
-Silver Surfer is not just a game it was my first experiment with the technical aspects of building an AI model
+The core question behind this project:
 
-The goal of this project is to explore:
+Which system can consistently reach high scores (1000+) and outperform human gameplay?
 
-Which model or technique can secure me 1000+ points with ease destroying the human competition
+This project compares:
 
-**Core**
+Rule-based logic
+Reinforcement learning
+A hybrid combination of both
+Game Mechanics
 
 A simple 2D endless runner:
 
-Player moves between 3 lanes(0,1,2)
-Controls:
-W → Move Up
-S → Move Down
-
-**"ESC"--to pause the game**  
-
-Objective:
+The player moves between 3 lanes: 0 (top), 1 (middle), 2 (bottom)
+Controls
+W → Move up
+S → Move down
+ESC → Pause
+Objective
 Avoid obstacles
 Survive as long as possible
 Maximize score
+System Architecture
 
- **Game X AI Framework**
+The project is built around a Godot ↔ Python communication loop using TCP sockets.
 
-1)  Godot Game Engine (Environment)   
-          ⇅ TCP Socket
-    Python RL Server (Agent)
+Setup Variants
+1. Reinforcement Learning Agent
+Godot (Environment)
+        ⇅ TCP
+Python (DQN Agent)
+2. Hybrid Agent
+Godot (Environment)
+        ⇅ TCP
+Python (Hybrid Logic + RL)
+3. Rule-Based Agent
+Godot (Environment + Bot Logic)
+Data Flow
 
-2)  Godot Game Engine (Environment)
-          ⇅ TCP Socket
-   Python Hybrid (Model)
-
-3)  Godot Game engine(Environment + Rule Based Bot)
-
-this is the data flow b/w tcp connection:-->
+Each frame:
 
 Godot sends:
-Current state (distances, lane, speed)
-Reward signal
+
+Current state (lane, obstacle distances, speed)
+Reward
 Done flag
+
 Python agent:
+
 Processes state
-Chooses action
-Sends action back
+Selects action
+
 Godot:
+
 Applies action
 Continues simulation
 State Representation
 
-The agent receives:(JSON PACKETS)
+The agent receives a JSON packet:
 
 [
-  lane,        # normalized (0–2)
-  t1, m1, b1,  # closest obstacle distances
-  t2, m2, b2,  # second obstacle distances
-  speed        # normalized
+  lane,
+  t1, m1, b1,
+  t2, m2, b2,
+  speed
 ]
 
--->Systems Implemented
+Where:
 
+t1, m1, b1 → nearest obstacle distances
+t2, m2, b2 → second nearest distances
+speed → normalized game speed
+Implemented Systems
+1. Rule-Based Agent
 
-1️ Rule-Based Agent
+Simple deterministic logic:
 
-A bot using simple logic:
+Avoid nearest obstacle
+Move to safest lane
+Use threshold-based decisions
 
-Avoid closest obstacle
-Prioritize safest lane
-React based on thresholds
+Pros
 
-✔ Fast
-❌ Not adaptive
-❌ Limited ceiling
+Fast
+Predictable
 
-2️ Reinforcement Learning Agent (DQN)
+Cons
 
-Deep Q-Network using:
+Not adaptive
+Limited performance ceiling
+2. Reinforcement Learning Agent (DQN)
+
+Built using:
 
 PyTorch
 Experience Replay
 Prioritized Sampling
-Target Network Stabilization
-Key Features:
-Epsilon-Greedy exploration
-Smooth L1 Loss (Huber Loss)
+Target Network
+
+Key Features
+
+Epsilon-greedy exploration
+Huber (Smooth L1) loss
 Soft target updates
 Action repeat for stability
+CSV logging for training analysis
+
+Core Idea
+
 Q(s, a) → expected future reward
-CSV logging to study and understand the models learning patterns
-Safe quit from terminal to save the model
+3. Hybrid Learning Agent
 
-3️  Hybrid Learning Agent 
+Combines:
 
-(A sum from my previous mistakes) 
+Rule-based safety layer
+Reinforcement learning policy
 
-Rule-Based decision system
-Reinforcement Learning policy
-How it works:
+How it works
+
 RL proposes an action
-Rule system validates / overrides in critical situations
-Blended decision improves survival
-Why this matters:
-Fixes early-stage RL stupidity
-Prevents catastrophic failures
-Accelerates learning convergence
-Produces more human-like behavior
-CSV logging to study and understand the models learning patterns
-Safe quit from terminal to save the model
+Rule system overrides unsafe decisions
+Final action is executed
 
-✔ Stable
-✔ Smarter early training
-✔ Better long-term performance
+Why this matters
 
-**Reward System**
+Prevents early-stage RL failures
+Stabilizes training
+Improves convergence speed
+Produces more consistent behavior
 
-Designed to guide learning(just enough to not count as rules)
+Characteristics
 
-✅ Survival reward (small positive)
-✅ Passing obstacle bonus (main signal)
-⚠️ Danger penalty (too close to obstacle)
-⚠️ Movement penalty (anti-spam)
-❌ Death penalty (large negative)
-    Experiment Goals
+More stable than pure RL
+Better early performance
+Strong long-term results
+Reward System
 
+Designed to guide learning without hardcoding behavior:
+
+Small survival reward
+Large reward for passing obstacles
+Penalty for being too close to obstacles
+Small penalty for unnecessary movement
+Large penalty for death
+Installation and Setup
+Requirements
+Godot Engine (4.x recommended)
+Python 3.9+
+PyTorch
+NumPy
+1. Clone the Repository
+git clone https://github.com/your-username/silver-surfer.git
+cd silver-surfer
+2. Install Python Dependencies
+pip install torch numpy
+3. Run the AI Server
+python main.py
+4. Run the Game
+Open the project in Godot
+Run the main scene
+
+The game will connect to the Python agent via TCP.
+
+Reproducing Results
+
+To replicate experiments:
+
+Start Python training server(PYTHON BEFORE GODOT)
+Run the Godot game
+Let episodes run continuously
+Monitor:
+Terminal logs
+CSV training file
+Stop safely using CTRL + C (model will save)
